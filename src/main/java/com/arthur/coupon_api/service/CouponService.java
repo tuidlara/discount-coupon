@@ -2,6 +2,7 @@ package com.arthur.coupon_api.service;
 
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
+import com.arthur.coupon_api.dto.CouponUpdateRequest;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
 import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
@@ -58,6 +59,13 @@ public class CouponService {
         couponRepository.delete(coupon);
     }
 
+    public CouponResponse atualizarCupom(String code, CouponUpdateRequest request) {
+        Coupon coupon = couponRepository.findByCode(code)
+                .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
 
+        coupon.setDiscount(request.discount());
+        couponRepository.save(coupon);
+        return toResponse(coupon);
+    }
 
 }
