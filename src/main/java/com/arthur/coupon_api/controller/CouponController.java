@@ -29,5 +29,9 @@ public class CouponController {
         return couponService.listarCupons(pageable);
     }
 
+    @GetMapping("/{code}")
+    public CouponResponse getCouponByCode(@PathVariable String code) {
+        return couponService.buscarCupomPorCodigo(code);
+    }
 
 }

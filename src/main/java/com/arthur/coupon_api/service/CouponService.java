@@ -3,6 +3,7 @@ package com.arthur.coupon_api.service;
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
 import com.arthur.coupon_api.entity.Coupon;
+import com.arthur.coupon_api.exception.CouponNotFoundException;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,10 @@ public class CouponService {
         return cupons.map(this::toResponse);
     }
 
-
-
+    public CouponResponse buscarCupomPorCodigo(String code) {
+        Coupon coupon = couponRepository.findByCode(code)
+                .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
+        return toResponse(coupon);
+    }
 
 }
