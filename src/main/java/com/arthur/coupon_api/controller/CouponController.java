@@ -3,6 +3,7 @@ package com.arthur.coupon_api.controller;
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
 import com.arthur.coupon_api.service.CouponService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class CouponController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CouponResponse createCoupon(@RequestBody CouponRequest request) {
+    public CouponResponse createCoupon(@Valid @RequestBody CouponRequest request) {
         return couponService.criarCupom(request);
     }
 
