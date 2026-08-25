@@ -1,8 +1,6 @@
 package com.arthur.coupon_api.service;
 
-import com.arthur.coupon_api.dto.CouponRequest;
-import com.arthur.coupon_api.dto.CouponResponse;
-import com.arthur.coupon_api.dto.CouponUpdateRequest;
+import com.arthur.coupon_api.dto.*;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
 import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
@@ -10,6 +8,8 @@ import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 public class CouponService {
@@ -66,6 +66,24 @@ public class CouponService {
         coupon.setDiscount(request.discount());
         couponRepository.save(coupon);
         return toResponse(coupon);
+    }
+
+    public CouponApplyResponse aplicarCupom(CouponApplyRequest request) {
+        Coupon coupon = couponRepository.findByCode(request.code())
+                .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
+
+        BigDecimal discount = BigDecimal.valueOf(coupon.getDiscount());
+        BigDecimal valorDesconto = request.amount().multiply(discount)
+                .divide(BigDecimal.valueOf(100));
+
+        BigDecimal valorFinal = request.amount().subtract(valorDesconto);
+        return new CouponApplyResponse(
+                coupon.getCode(),
+                request.amount(),
+                valorFinal,
+                coupon.getDiscount()
+        );
+
     }
 
 }
