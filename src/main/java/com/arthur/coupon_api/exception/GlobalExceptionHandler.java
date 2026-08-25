@@ -1,5 +1,6 @@
 package com.arthur.coupon_api.exception;
 
+import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,4 +32,10 @@ public class GlobalExceptionHandler {
         return e.getMessage();
     }
 
+    @ExceptionHandler(CouponAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String tratarErroCupomJaExiste(CouponAlreadyExistsException e) {
+        return e.getMessage();
+
+    }
 }

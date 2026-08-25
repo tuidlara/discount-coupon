@@ -4,6 +4,7 @@ import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
+import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,9 @@ public class CouponService {
 
     public CouponResponse criarCupom(CouponRequest request) {
         Coupon coupon = toEntity(request);
+        if (couponRepository.existsByCode(coupon.getCode())) {
+            throw new CouponAlreadyExistsException("Cupom já existe");
+        }
         Coupon cupomSalvo = couponRepository.save(coupon);
         return toResponse(cupomSalvo);
     }
@@ -53,5 +57,7 @@ public class CouponService {
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
         couponRepository.delete(coupon);
     }
+
+
 
 }
