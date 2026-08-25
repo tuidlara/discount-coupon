@@ -48,4 +48,10 @@ public class CouponService {
         return toResponse(coupon);
     }
 
+    public void deletarCupom(String code) {
+        Coupon coupon = couponRepository.findByCode(code)
+                .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
+        couponRepository.delete(coupon);
+    }
+
 }

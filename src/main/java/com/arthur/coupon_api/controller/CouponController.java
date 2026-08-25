@@ -34,4 +34,9 @@ public class CouponController {
         return couponService.buscarCupomPorCodigo(code);
     }
 
+    @DeleteMapping("/{code}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCoupon(@PathVariable String code) {
+        couponService.deletarCupom(code);
+    }
 }
