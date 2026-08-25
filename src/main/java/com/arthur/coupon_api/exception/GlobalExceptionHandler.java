@@ -1,6 +1,5 @@
 package com.arthur.coupon_api.exception;
 
-import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -4,7 +4,7 @@ import com.arthur.coupon_api.dto.*;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponExpiredException;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
-import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
+import com.arthur.coupon_api.exception.CouponAlreadyExistsException;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
