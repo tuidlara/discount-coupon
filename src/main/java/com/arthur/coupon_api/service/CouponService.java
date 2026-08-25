@@ -2,6 +2,7 @@ package com.arthur.coupon_api.service;
 
 import com.arthur.coupon_api.dto.*;
 import com.arthur.coupon_api.entity.Coupon;
+import com.arthur.coupon_api.exception.CouponExpiredException;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
 import com.arthur.coupon_api.repository.CouponAlreadyExistsException;
 import com.arthur.coupon_api.repository.CouponRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class CouponService {
@@ -24,7 +26,10 @@ public class CouponService {
         return new CouponResponse(
                 coupon.getId(),
                 coupon.getCode(),
-                coupon.getDiscount());
+                coupon.getDiscount(),
+                coupon.getCreatedAt(),
+                coupon.getExpirationDate());
+
     }
 
     private Coupon toEntity(CouponRequest request) {
@@ -71,6 +76,10 @@ public class CouponService {
     public CouponApplyResponse aplicarCupom(CouponApplyRequest request) {
         Coupon coupon = couponRepository.findByCode(request.code())
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
+
+        if(coupon.getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new CouponExpiredException("Cupom expirado");
+        }
 
         BigDecimal discount = BigDecimal.valueOf(coupon.getDiscount());
         BigDecimal valorDesconto = request.amount().multiply(discount)

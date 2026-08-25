@@ -2,6 +2,8 @@ package com.arthur.coupon_api.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Coupon {
 
@@ -12,6 +14,15 @@ public class Coupon {
     @Column(nullable = false, unique = true)
     private String code;
     private Double discount;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime expirationDate;
+
+    @PrePersist
+    public void aoCriar() {
+        this.createdAt = LocalDateTime.now();
+        this.expirationDate = this.createdAt.plusDays(60);
+    }
 
     public Coupon() {
     }
@@ -39,5 +50,13 @@ public class Coupon {
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
     }
 }

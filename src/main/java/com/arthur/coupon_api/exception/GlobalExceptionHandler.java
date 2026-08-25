@@ -38,4 +38,10 @@ public class GlobalExceptionHandler {
         return e.getMessage();
 
     }
+
+    @ExceptionHandler(CouponExpiredException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String tratarErroCupomExpirado(CouponExpiredException e) {
+        return e.getMessage();
+    }
 }
