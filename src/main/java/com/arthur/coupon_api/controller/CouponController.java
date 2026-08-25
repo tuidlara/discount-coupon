@@ -3,6 +3,8 @@ package com.arthur.coupon_api.controller;
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
 import com.arthur.coupon_api.service.CouponService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,11 @@ public class CouponController {
     @ResponseStatus(HttpStatus.CREATED)
     public CouponResponse createCoupon(@RequestBody CouponRequest request) {
         return couponService.criarCupom(request);
+    }
+
+    @GetMapping
+    public Page<CouponResponse> listAllCoupons(Pageable pageable) {
+        return couponService.listarCupons(pageable);
     }
 
 
