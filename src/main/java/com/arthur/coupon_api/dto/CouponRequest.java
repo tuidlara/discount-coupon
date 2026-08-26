@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
+
 public record CouponRequest(
 
     @NotBlank
@@ -13,6 +15,10 @@ public record CouponRequest(
     @NotNull
     @Positive
     @Max(100)
-    Double discount
+    Double discount,
+
+    @NotNull
+    @Positive
+    BigDecimal minimumAmount
 ) {
 }

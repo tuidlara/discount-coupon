@@ -2,6 +2,7 @@ package com.arthur.coupon_api.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,6 +19,8 @@ public class Coupon {
     private LocalDateTime createdAt;
     private LocalDateTime expirationDate;
 
+    private BigDecimal minimumAmount;
+
     @PrePersist
     public void aoCriar() {
         this.createdAt = LocalDateTime.now();
@@ -27,9 +30,10 @@ public class Coupon {
     public Coupon() {
     }
 
-    public Coupon(String code, Double discount) {
+    public Coupon(String code, Double discount, BigDecimal minimumAmount) {
         this.code = code;
         this.discount = discount;
+        this.minimumAmount = minimumAmount;
     }
 
     public Long getId() {
@@ -58,5 +62,9 @@ public class Coupon {
 
     public LocalDateTime getExpirationDate() {
         return expirationDate;
+    }
+
+    public BigDecimal getMinimumAmount() {
+        return minimumAmount;
     }
 }

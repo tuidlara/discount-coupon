@@ -43,4 +43,11 @@ public class GlobalExceptionHandler {
     public String tratarErroCupomExpirado(CouponExpiredException e) {
         return e.getMessage();
     }
+
+    @ExceptionHandler(CouponMinimumAmountException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String tratarErroCupomValorMinimo(CouponMinimumAmountException e) {
+        return e.getMessage();
+    }
+
 }

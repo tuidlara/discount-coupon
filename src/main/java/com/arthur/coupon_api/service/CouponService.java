@@ -3,6 +3,7 @@ package com.arthur.coupon_api.service;
 import com.arthur.coupon_api.dto.*;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponExpiredException;
+import com.arthur.coupon_api.exception.CouponMinimumAmountException;
 import com.arthur.coupon_api.exception.CouponNotFoundException;
 import com.arthur.coupon_api.exception.CouponAlreadyExistsException;
 import com.arthur.coupon_api.repository.CouponRepository;
@@ -27,6 +28,7 @@ public class CouponService {
                 coupon.getId(),
                 coupon.getCode(),
                 coupon.getDiscount(),
+                coupon.getMinimumAmount(),
                 coupon.getCreatedAt(),
                 coupon.getExpirationDate());
 
@@ -35,7 +37,8 @@ public class CouponService {
     private Coupon toEntity(CouponRequest request) {
         return new Coupon(
                 request.code(),
-                request.discount());
+                request.discount(),
+                request.minimumAmount());
     }
 
     public CouponResponse criarCupom(CouponRequest request) {
@@ -79,6 +82,10 @@ public class CouponService {
 
         if(coupon.getExpirationDate().isBefore(LocalDateTime.now())) {
             throw new CouponExpiredException("Cupom expirado");
+        }
+
+        if(request.amount().compareTo(coupon.getMinimumAmount()) < 0){
+            throw new CouponMinimumAmountException("Valor mínimo não atingido");
         }
 
         BigDecimal discount = BigDecimal.valueOf(coupon.getDiscount());
