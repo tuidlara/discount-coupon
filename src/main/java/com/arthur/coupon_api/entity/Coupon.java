@@ -21,6 +21,9 @@ public class Coupon {
 
     private BigDecimal minimumAmount;
 
+    private Integer maximumUses;
+    private Integer currentUses = 0;
+
     @PrePersist
     public void aoCriar() {
         this.createdAt = LocalDateTime.now();
@@ -30,10 +33,11 @@ public class Coupon {
     public Coupon() {
     }
 
-    public Coupon(String code, Double discount, BigDecimal minimumAmount) {
+    public Coupon(String code, Double discount, BigDecimal minimumAmount, Integer maximumUses) {
         this.code = code;
         this.discount = discount;
         this.minimumAmount = minimumAmount;
+        this.maximumUses = maximumUses;
     }
 
     public Long getId() {
@@ -66,5 +70,17 @@ public class Coupon {
 
     public BigDecimal getMinimumAmount() {
         return minimumAmount;
+    }
+
+    public Integer getMaximumUses() {
+        return maximumUses;
+    }
+
+    public Integer getCurrentUses() {
+        return currentUses;
+    }
+
+    public void setCurrentUses(Integer currentUses) {
+        this.currentUses = currentUses;
     }
 }

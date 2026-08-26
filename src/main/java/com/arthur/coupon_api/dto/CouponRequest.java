@@ -19,6 +19,10 @@ public record CouponRequest(
 
     @NotNull
     @Positive
-    BigDecimal minimumAmount
+    BigDecimal minimumAmount,
+
+    @NotNull
+    @Positive
+    Integer maximumUses
 ) {
 }

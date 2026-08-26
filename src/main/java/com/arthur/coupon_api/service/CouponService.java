@@ -2,10 +2,7 @@ package com.arthur.coupon_api.service;
 
 import com.arthur.coupon_api.dto.*;
 import com.arthur.coupon_api.entity.Coupon;
-import com.arthur.coupon_api.exception.CouponExpiredException;
-import com.arthur.coupon_api.exception.CouponMinimumAmountException;
-import com.arthur.coupon_api.exception.CouponNotFoundException;
-import com.arthur.coupon_api.exception.CouponAlreadyExistsException;
+import com.arthur.coupon_api.exception.*;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +27,9 @@ public class CouponService {
                 coupon.getDiscount(),
                 coupon.getMinimumAmount(),
                 coupon.getCreatedAt(),
-                coupon.getExpirationDate());
+                coupon.getExpirationDate(),
+                coupon.getMaximumUses(),
+                coupon.getCurrentUses());
 
     }
 
@@ -38,7 +37,8 @@ public class CouponService {
         return new Coupon(
                 request.code(),
                 request.discount(),
-                request.minimumAmount());
+                request.minimumAmount(),
+                request.maximumUses());
     }
 
     public CouponResponse criarCupom(CouponRequest request) {
@@ -80,12 +80,16 @@ public class CouponService {
         Coupon coupon = couponRepository.findByCode(request.code())
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
 
-        if(coupon.getExpirationDate().isBefore(LocalDateTime.now())) {
+        if (coupon.getExpirationDate().isBefore(LocalDateTime.now())) {
             throw new CouponExpiredException("Cupom expirado");
         }
 
-        if(request.amount().compareTo(coupon.getMinimumAmount()) < 0){
+        if (request.amount().compareTo(coupon.getMinimumAmount()) < 0) {
             throw new CouponMinimumAmountException("Valor mínimo não atingido");
+        }
+
+        if (coupon.getCurrentUses() >= coupon.getMaximumUses()) {
+            throw new CouponUsageLimitException("Cupom atingiu o limite de uso");
         }
 
         BigDecimal discount = BigDecimal.valueOf(coupon.getDiscount());
@@ -93,6 +97,10 @@ public class CouponService {
                 .divide(BigDecimal.valueOf(100));
 
         BigDecimal valorFinal = request.amount().subtract(valorDesconto);
+
+        coupon.setCurrentUses(coupon.getCurrentUses() + 1);
+        couponRepository.save(coupon);
+
         return new CouponApplyResponse(
                 coupon.getCode(),
                 request.amount(),

@@ -9,6 +9,8 @@ public record CouponResponse(
     Double discount,
     BigDecimal minimumAmount,
     LocalDateTime createdAt,
-    LocalDateTime expirationDate
+    LocalDateTime expirationDate,
+    Integer maximumUses,
+    Integer currentUses
 ) {
 }

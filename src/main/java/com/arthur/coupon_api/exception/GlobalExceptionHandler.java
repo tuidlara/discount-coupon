@@ -50,4 +50,10 @@ public class GlobalExceptionHandler {
         return e.getMessage();
     }
 
+    @ExceptionHandler(CouponUsageLimitException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String tratarErroLimiteDeUsoCupom(CouponUsageLimitException e) {
+        return e.getMessage();
+    }
+
 }
