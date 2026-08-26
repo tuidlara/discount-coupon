@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Positive;
 public record CouponUpdateRequest(
         @NotNull
         @Positive
-        Double discount
+        Double discount,
+
+        @NotNull
+        Boolean isActive
 ) {
 }

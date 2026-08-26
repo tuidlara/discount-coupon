@@ -56,4 +56,9 @@ public class GlobalExceptionHandler {
         return e.getMessage();
     }
 
+    @ExceptionHandler(CouponInactiveException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String tratarErroCupomInativo(CouponInactiveException e) {
+        return e.getMessage();
+    }
 }

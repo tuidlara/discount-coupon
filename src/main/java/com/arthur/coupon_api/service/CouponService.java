@@ -29,7 +29,8 @@ public class CouponService {
                 coupon.getCreatedAt(),
                 coupon.getExpirationDate(),
                 coupon.getMaximumUses(),
-                coupon.getCurrentUses());
+                coupon.getCurrentUses(),
+                coupon.isActive());
 
     }
 
@@ -72,6 +73,7 @@ public class CouponService {
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
 
         coupon.setDiscount(request.discount());
+        coupon.setActive(request.isActive());
         couponRepository.save(coupon);
         return toResponse(coupon);
     }
@@ -79,6 +81,10 @@ public class CouponService {
     public CouponApplyResponse aplicarCupom(CouponApplyRequest request) {
         Coupon coupon = couponRepository.findByCode(request.code())
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
+
+        if(!coupon.isActive()) {
+            throw new CouponInactiveException("Cupom está inativo");
+        }
 
         if (coupon.getExpirationDate().isBefore(LocalDateTime.now())) {
             throw new CouponExpiredException("Cupom expirado");

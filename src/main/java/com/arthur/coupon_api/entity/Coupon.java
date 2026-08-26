@@ -24,6 +24,8 @@ public class Coupon {
     private Integer maximumUses;
     private Integer currentUses = 0;
 
+    private boolean isActive = true;
+
     @PrePersist
     public void aoCriar() {
         this.createdAt = LocalDateTime.now();
@@ -82,5 +84,13 @@ public class Coupon {
 
     public void setCurrentUses(Integer currentUses) {
         this.currentUses = currentUses;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

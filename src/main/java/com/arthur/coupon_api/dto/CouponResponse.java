@@ -11,6 +11,7 @@ public record CouponResponse(
     LocalDateTime createdAt,
     LocalDateTime expirationDate,
     Integer maximumUses,
-    Integer currentUses
+    Integer currentUses,
+    boolean isActive
 ) {
 }
