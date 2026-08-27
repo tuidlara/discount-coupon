@@ -70,6 +70,10 @@ public class Coupon {
         return expirationDate;
     }
 
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
     public BigDecimal getMinimumAmount() {
         return minimumAmount;
     }
