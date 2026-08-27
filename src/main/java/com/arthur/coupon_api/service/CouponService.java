@@ -74,6 +74,7 @@ public class CouponService {
 
         coupon.setDiscount(request.discount());
         coupon.setActive(request.isActive());
+        coupon.setMinimumAmount(request.minimumAmount());
         couponRepository.save(coupon);
         return toResponse(coupon);
     }

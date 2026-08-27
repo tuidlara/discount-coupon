@@ -74,6 +74,10 @@ public class Coupon {
         return minimumAmount;
     }
 
+    public void setMinimumAmount(BigDecimal minimumAmount) {
+        this.minimumAmount = minimumAmount;
+    }
+
     public Integer getMaximumUses() {
         return maximumUses;
     }
