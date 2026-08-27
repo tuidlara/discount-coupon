@@ -3,6 +3,7 @@ package com.arthur.coupon_api.service;
 import com.arthur.coupon_api.dto.CouponApplyRequest;
 import com.arthur.coupon_api.dto.CouponApplyResponse;
 import com.arthur.coupon_api.entity.Coupon;
+import com.arthur.coupon_api.exception.CouponUsageLimitException;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,5 +64,32 @@ public class CouponServiceTest {
 
         //verifica se foi incrementado o uso do cupom
         assertEquals(1, coupon.getCurrentUses());
+    }
+
+    @Test
+    void naoDeveAplicarCupomQuandoAtingirLimiteDeUso() {
+
+        Coupon coupon = new Coupon(
+                "DEV20",
+                20.0,
+                new BigDecimal("100"),
+                5
+        );
+
+        coupon.setCurrentUses(5);
+        coupon.setExpirationDate(LocalDateTime.now().plusDays(30));
+
+        when(couponRepository.findByCode("DEV20"))
+                .thenReturn(Optional.of(coupon));
+
+        CouponApplyRequest request = new CouponApplyRequest(
+                "DEV20",
+                new BigDecimal("200")
+        );
+
+        assertThrows(
+                CouponUsageLimitException.class,
+                () -> couponService.aplicarCupom(request)
+        );
     }
 }
