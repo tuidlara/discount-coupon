@@ -3,10 +3,7 @@ package com.arthur.coupon_api.service;
 import com.arthur.coupon_api.dto.CouponApplyRequest;
 import com.arthur.coupon_api.dto.CouponApplyResponse;
 import com.arthur.coupon_api.entity.Coupon;
-import com.arthur.coupon_api.exception.CouponExpiredException;
-import com.arthur.coupon_api.exception.CouponInactiveException;
-import com.arthur.coupon_api.exception.CouponMinimumAmountException;
-import com.arthur.coupon_api.exception.CouponUsageLimitException;
+import com.arthur.coupon_api.exception.*;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -166,4 +163,19 @@ public class CouponServiceTest {
                 () -> couponService.aplicarCupom(request));
     }
 
+    @Test
+    void naoDeveAplicarCupomNaoEncontrado() {
+
+        when(couponRepository.findByCode("DEV50"))
+                .thenReturn(Optional.empty());
+
+        CouponApplyRequest request = new CouponApplyRequest(
+                "DEV50",
+                new BigDecimal("100"));
+
+        assertThrows(
+                CouponNotFoundException.class,
+                () -> couponService.aplicarCupom(request)
+        );
+    }
 }
