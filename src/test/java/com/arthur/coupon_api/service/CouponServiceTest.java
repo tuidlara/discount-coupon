@@ -5,6 +5,7 @@ import com.arthur.coupon_api.dto.CouponApplyResponse;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.CouponExpiredException;
 import com.arthur.coupon_api.exception.CouponInactiveException;
+import com.arthur.coupon_api.exception.CouponMinimumAmountException;
 import com.arthur.coupon_api.exception.CouponUsageLimitException;
 import com.arthur.coupon_api.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,4 +143,27 @@ public class CouponServiceTest {
                 () -> couponService.aplicarCupom(request));
 
     }
+
+    @Test
+    void naoDeveAplicarCupomQuandoNaoAtingirValorMinimo() {
+        Coupon coupon = new Coupon(
+                "DEV20",
+                20.0,
+                new BigDecimal("100"),
+                5);
+
+        coupon.setMinimumAmount(BigDecimal.valueOf(200));
+        coupon.setExpirationDate(LocalDateTime.now().plusDays(30));
+
+        when(couponRepository.findByCode("DEV20"))
+                .thenReturn(Optional.of(coupon));
+
+        CouponApplyRequest request = new CouponApplyRequest(
+                "DEV20",
+                new BigDecimal("100"));
+
+        assertThrows(CouponMinimumAmountException.class,
+                () -> couponService.aplicarCupom(request));
+    }
+
 }
