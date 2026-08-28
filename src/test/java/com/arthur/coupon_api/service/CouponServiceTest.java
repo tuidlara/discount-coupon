@@ -207,4 +207,20 @@ public class CouponServiceTest {
         assertEquals(request.isActive(), response.isActive());
         assertEquals(request.minimumAmount(), response.minimumAmount());
     }
+
+    @Test
+    void naoDeveAtualizarComCupomInexistente() {
+
+        when(couponRepository.findByCode("DEV20"))
+                .thenReturn(Optional.empty());
+
+        CouponUpdateRequest request = new CouponUpdateRequest(
+                50.0,
+                true,
+                BigDecimal.valueOf(100));
+
+        assertThrows(CouponNotFoundException.class,
+                () -> couponService.atualizarCupom("DEV20", request));
+
+    }
 }
