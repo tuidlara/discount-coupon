@@ -3,6 +3,7 @@ package com.arthur.coupon_api.service;
 import com.arthur.coupon_api.dto.CouponApplyRequest;
 import com.arthur.coupon_api.dto.CouponApplyResponse;
 import com.arthur.coupon_api.entity.Coupon;
+import com.arthur.coupon_api.exception.CouponExpiredException;
 import com.arthur.coupon_api.exception.CouponInactiveException;
 import com.arthur.coupon_api.exception.CouponUsageLimitException;
 import com.arthur.coupon_api.repository.CouponRepository;
@@ -115,6 +116,29 @@ public class CouponServiceTest {
                 new BigDecimal("200"));
 
         assertThrows(CouponInactiveException.class,
+                () -> couponService.aplicarCupom(request));
+
+    }
+
+    @Test
+    void naoDeveAplicarCupomQuandoEstiverExpirado() {
+
+        Coupon coupon = new Coupon(
+                "DEV20",
+                20.0,
+                new BigDecimal("100"),
+                5);
+
+        coupon.setExpirationDate(LocalDateTime.now().minusDays(1));
+
+        when(couponRepository.findByCode("DEV20"))
+                .thenReturn(Optional.of(coupon));
+
+        CouponApplyRequest request = new CouponApplyRequest(
+                "DEV20",
+                new BigDecimal("100"));
+
+        assertThrows(CouponExpiredException.class,
                 () -> couponService.aplicarCupom(request));
 
     }
