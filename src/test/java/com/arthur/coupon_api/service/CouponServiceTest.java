@@ -2,6 +2,8 @@ package com.arthur.coupon_api.service;
 
 import com.arthur.coupon_api.dto.CouponApplyRequest;
 import com.arthur.coupon_api.dto.CouponApplyResponse;
+import com.arthur.coupon_api.dto.CouponResponse;
+import com.arthur.coupon_api.dto.CouponUpdateRequest;
 import com.arthur.coupon_api.entity.Coupon;
 import com.arthur.coupon_api.exception.*;
 import com.arthur.coupon_api.repository.CouponRepository;
@@ -177,5 +179,32 @@ public class CouponServiceTest {
                 CouponNotFoundException.class,
                 () -> couponService.aplicarCupom(request)
         );
+    }
+
+    @Test
+    void deveAtualizarCupom() {
+
+        Coupon coupon = new Coupon(
+                "DEV20",
+                20.0,
+                new BigDecimal("200"),
+                5);
+
+        coupon.setMinimumAmount(BigDecimal.valueOf(100));
+        coupon.setExpirationDate(LocalDateTime.now().plusDays(60));
+
+        when(couponRepository.findByCode("DEV20"))
+                .thenReturn(Optional.of(coupon));
+
+        CouponUpdateRequest request = new CouponUpdateRequest(
+                50.0,
+                true,
+                BigDecimal.valueOf(100));
+
+        CouponResponse response = couponService.atualizarCupom("DEV20", request);
+
+        assertEquals(request.discount(), response.discount());
+        assertEquals(request.isActive(), response.isActive());
+        assertEquals(request.minimumAmount(), response.minimumAmount());
     }
 }
