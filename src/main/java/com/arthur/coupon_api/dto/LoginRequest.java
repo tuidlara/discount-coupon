@@ -2,16 +2,14 @@ package com.arthur.coupon_api.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
-public record CadastroRequest(
+public record LoginRequest(
 
         @Email(message = "Email inválido.")
         @NotBlank(message = "Email não pode ser vazio.")
         String email,
 
         @NotBlank(message = "Senha não pode ser vazia.")
-        @Size(min = 8, message = "Senha deve conter no mínimo 8 caracteres.")
         String senha
 ) {
 }
