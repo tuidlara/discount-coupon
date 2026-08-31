@@ -83,4 +83,22 @@ public class CouponControllerTest {
                 .andExpect(jsonPath("$.isActive").value(true));
     }
 
+    @Test
+    void naoDeveCriarCupomComDescontoInvalido() throws Exception {
+
+        mockMvc.perform(
+                post("/coupons")
+                        .content("""
+                        {
+                            "code": "DEV20",
+                            "discount": 150,
+                            "minimumAmount": 100,
+                            "maximumUses": 5
+                        }
+                        """)
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(status().isBadRequest());
+    }
+
 }
