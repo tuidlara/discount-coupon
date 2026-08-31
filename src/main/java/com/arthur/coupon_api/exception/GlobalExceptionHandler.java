@@ -61,4 +61,16 @@ public class GlobalExceptionHandler {
     public String tratarErroCupomInativo(CouponInactiveException e) {
         return e.getMessage();
     }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String tratarErroUsuarioJaExiste(UserAlreadyExistsException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String tratarCredenciaisInvalidas(InvalidCredentialsException e) {
+        return e.getMessage();
+    }
 }

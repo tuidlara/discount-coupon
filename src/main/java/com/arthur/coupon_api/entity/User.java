@@ -3,6 +3,7 @@ package com.arthur.coupon_api.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
@@ -20,6 +21,9 @@ public class User {
     public User(String email, String senha) {
         this.email = email;
         this.senha = senha;
+    }
+
+    protected User() {
     }
 
     public Long getId() {
