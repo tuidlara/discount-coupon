@@ -3,6 +3,7 @@ package com.arthur.coupon_api.config;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -44,10 +45,37 @@ public class SecurityConfig {
                                     }
                                     """);
                         })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("""
+                                    {
+                                        "erro": "Acesso negado"
+                                    }
+                                    """);
+                        })
+
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/coupons")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/coupons/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/coupons/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/coupons/**")
+                        .hasAnyRole("CLIENT", "ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/coupons/apply")
+                        .hasAnyRole("CLIENT", "ADMIN")
+
                         .anyRequest().authenticated()
+
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
