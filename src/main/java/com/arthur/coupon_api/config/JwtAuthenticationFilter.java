@@ -3,6 +3,7 @@ package com.arthur.coupon_api.config;
 import com.arthur.coupon_api.entity.User;
 import com.arthur.coupon_api.repository.UserRepository;
 import com.arthur.coupon_api.service.TokenService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,28 +39,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            String email = tokenService.validarToken(token);
+            try {
 
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                String token = authHeader.substring(7);
+                String email = tokenService.validarToken(token);
 
-            SimpleGrantedAuthority authority =
-                    new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-            List<SimpleGrantedAuthority> authorities = List.of(authority);
+                SimpleGrantedAuthority authority =
+                        new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            email,
-                            null,
-                            authorities);
+                List<SimpleGrantedAuthority> authorities = List.of(authority);
 
-            SecurityContextHolder
-                    .getContext()
-                    .setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                authorities);
 
+                SecurityContextHolder
+                        .getContext()
+                        .setAuthentication(authentication);
 
+            }catch (JwtException e) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);
