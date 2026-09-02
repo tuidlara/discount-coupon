@@ -1,6 +1,7 @@
 package com.arthur.coupon_api.config;
 
 import com.arthur.coupon_api.entity.User;
+import com.arthur.coupon_api.exception.UserNotFoundException;
 import com.arthur.coupon_api.repository.UserRepository;
 import com.arthur.coupon_api.service.TokenService;
 import io.jsonwebtoken.JwtException;
@@ -45,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = tokenService.validarToken(token);
 
                 User user = userRepository.findByEmail(email)
-                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                        .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
                 SimpleGrantedAuthority authority =
                         new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
@@ -62,7 +63,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .getContext()
                         .setAuthentication(authentication);
 
-            }catch (JwtException e) {
+            } catch (UserNotFoundException e) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("""
+            {
+                "erro": "Usuário não encontrado"
+            }
+            """);
+                return;
+            } catch (JwtException e) {
                 SecurityContextHolder.clearContext();
             }
         }
