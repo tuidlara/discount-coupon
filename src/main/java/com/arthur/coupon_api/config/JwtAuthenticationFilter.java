@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("""
             {
-                "erro": "Usuário não encontrado"
+                "erro": "Token inválido ou expirado"
             }
             """);
                 return;
