@@ -3,6 +3,7 @@ package com.arthur.coupon_api.config;
 import com.arthur.coupon_api.controller.CouponController;
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
+import com.arthur.coupon_api.dto.CouponUpdateRequest;
 import com.arthur.coupon_api.entity.Role;
 import com.arthur.coupon_api.entity.User;
 import com.arthur.coupon_api.repository.UserRepository;
@@ -22,8 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //mockMvc com os filtros de segurança habilitados
@@ -124,4 +124,107 @@ public class SecurityConfigTest {
 
 
     }
+
+    @Test
+    void devePermitirConsultarCuponsQuandoUsuarioForClient() throws Exception {
+        User usuario = new User("cliente@email.com", "senha");
+        usuario.setRole(Role.CLIENT);
+
+        when(userRepository.findByEmail("cliente@email.com"))
+                .thenReturn(Optional.of(usuario));
+
+        when(tokenService.validarToken("token-client"))
+                .thenReturn("cliente@email.com");
+
+        mockMvc.perform(
+                        get("/coupons")
+                                .header("Authorization", "Bearer token-client")
+                )
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void naoDeveDeletarCupomQuandoUsuarioForClient() throws Exception {
+        User usuario = new User("cliente@email.com", "senha");
+        usuario.setRole(Role.CLIENT);
+
+        when(userRepository.findByEmail("cliente@email.com"))
+                .thenReturn(Optional.of(usuario));
+
+        when(tokenService.validarToken("token-client"))
+                .thenReturn("cliente@email.com");
+
+        mockMvc.perform(
+                        delete("/coupons/DEV20")
+                                .header("Authorization", "Bearer token-client")
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void naoDeveAtualizarCupomQuandoUsuarioForClient() throws Exception {
+        User usuario = new User("cliente@email.com", "senha");
+        usuario.setRole(Role.CLIENT);
+
+        when(userRepository.findByEmail("cliente@email.com"))
+                .thenReturn(Optional.of(usuario));
+
+        when(tokenService.validarToken("token-client"))
+                .thenReturn("cliente@email.com");
+
+        mockMvc.perform(
+                        put("/coupons/DEV20")
+                                .header("Authorization", "Bearer token-client")
+                )
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void devePermitirAtualizarCupomQuandoUsuarioForAdmin() throws Exception {
+        User usuario = new User("admin@email.com", "senha");
+        usuario.setRole(Role.ADMIN);
+
+        CouponUpdateRequest request = new CouponUpdateRequest(
+                20.0,
+                true,
+                BigDecimal.valueOf(100)
+        );
+
+        when(userRepository.findByEmail("admin@email.com"))
+                .thenReturn(Optional.of(usuario));
+
+        when(tokenService.validarToken("token-admin"))
+                .thenReturn("admin@email.com");
+
+        CouponResponse response = new CouponResponse(
+                1L,
+                "DEV20",
+                20.0,
+                BigDecimal.valueOf(100),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(60),
+                5,
+                0,
+                true
+        );
+
+        when(couponService.atualizarCupom("DEV20", request))
+                .thenReturn(response);
+
+        mockMvc.perform(
+                        put("/coupons/DEV20")
+                                .header("Authorization", "Bearer token-admin")
+                                .content("""
+                                        {
+                                            "discount": 20.0,
+                                            "isActive": true,
+                                            "minimumAmount": 100
+                                        }
+                                    """)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk());
+    }
 }
+
