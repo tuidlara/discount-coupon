@@ -44,8 +44,8 @@ public class CouponController {
             @ApiResponse(responseCode = "200", description = "Cupons listados com sucesso")
     })
     @GetMapping
-    public Page<CouponResponse> listAllCoupons(Pageable pageable) {
-        return couponService.listarCupons(pageable);
+    public Page<CouponResponse> listAllCoupons(Pageable pageable, Boolean active) {
+        return couponService.listarCupons(pageable, active);
     }
 
     @Operation(

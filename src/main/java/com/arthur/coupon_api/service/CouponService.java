@@ -51,8 +51,15 @@ public class CouponService {
         return toResponse(cupomSalvo);
     }
 
-    public Page<CouponResponse> listarCupons(Pageable pageable) {
-        Page<Coupon> cupons = couponRepository.findAll(pageable);
+    public Page<CouponResponse> listarCupons(Pageable pageable, Boolean active) {
+        Page<Coupon> cupons;
+
+        if (active == null) {
+            cupons = couponRepository.findAll(pageable);
+        } else {
+            cupons = couponRepository.findByIsActive(active, pageable);
+        }
+
         return cupons.map(this::toResponse);
     }
 
@@ -83,7 +90,7 @@ public class CouponService {
         Coupon coupon = couponRepository.findByCode(request.code())
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
 
-        if(!coupon.isActive()) {
+        if (!coupon.isActive()) {
             throw new CouponInactiveException("Cupom está inativo");
         }
 
