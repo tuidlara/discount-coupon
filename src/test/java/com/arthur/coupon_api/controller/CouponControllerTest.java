@@ -2,7 +2,9 @@ package com.arthur.coupon_api.controller;
 
 import com.arthur.coupon_api.dto.CouponRequest;
 import com.arthur.coupon_api.dto.CouponResponse;
+import com.arthur.coupon_api.repository.UserRepository;
 import com.arthur.coupon_api.service.CouponService;
+import com.arthur.coupon_api.service.TokenService;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,12 @@ public class CouponControllerTest {
     // cria um mock do service
     @MockitoBean
     private CouponService couponService;
+
+    @MockitoBean
+    private TokenService tokenService;
+
+    @MockitoBean
+    private UserRepository userRepository;
 
     @Autowired
     private MockMvc mockMvc;
