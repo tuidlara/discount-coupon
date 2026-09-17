@@ -7,6 +7,7 @@ import com.arthur.coupon_api.repository.CouponRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -86,6 +87,7 @@ public class CouponService {
         return toResponse(coupon);
     }
 
+    @Transactional
     public CouponApplyResponse aplicarCupom(CouponApplyRequest request) {
         Coupon coupon = couponRepository.findByCode(request.code())
                 .orElseThrow(() -> new CouponNotFoundException("Cupom não encontrado"));
