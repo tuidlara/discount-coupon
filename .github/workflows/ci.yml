@@ -36,5 +36,5 @@ jobs:
           DB_URL: jdbc:postgresql://localhost:5432/coupon
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
-          JWT_SECRET: chave-secreta-de-teste-do-ci
+          JWT_SECRET: chave-secreta-de-teste-do-ci-2026
         run: ./mvnw test
