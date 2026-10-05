@@ -37,7 +37,7 @@ The application uses `BigDecimal` for discount calculations and `PESSIMISTIC_WRI
 
 ## Technologies
 
-- Java 17
+- Java
 - Spring Boot
 - Spring Security
 - JWT
