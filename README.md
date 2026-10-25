@@ -172,3 +172,7 @@ src/main/java/com/arthur/coupon_api
 ├── repository
 └── service
 ```
+
+## Autor
+
+Arthur de Lara Zilli - [LinkedIn](https://www.linkedin.com/in/arthur-de-lara-zilli-957512420/)
