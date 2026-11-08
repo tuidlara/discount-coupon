@@ -43,7 +43,7 @@ The application uses `BigDecimal` for discount calculations and `PESSIMISTIC_WRI
 - JWT
 - Spring Data JPA / Hibernate
 - PostgreSQL
-- JUnit 5
+- JUnit
 - Swagger / OpenAPI
 - Maven
 - Docker
